@@ -79,3 +79,10 @@ body {
 .triple {
     flex-basis: 73%;
 }
+
+@media (max-width:425px) {
+    .calc-button {
+        width: 50px;
+        height: 50px;
+    }
+}
