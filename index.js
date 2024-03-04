@@ -1,6 +1,6 @@
 let runningTotal = 0;
 let buffer = "0";
-let previousOperator;
+let previousOperator = null;
 
 const screen = document.querySelector("#screen");
 
@@ -10,7 +10,7 @@ function buttonClick(value) {
   } else {
     handleNumber(value);
   }
-  screen.innerHTML = buffer;
+  screen.textContent = buffer;
 }
 
 function handleSymbol(symbol) {
@@ -25,25 +25,19 @@ function handleSymbol(symbol) {
       }
       flushOperation(parseInt(buffer));
       previousOperator = null;
-      buffer = runningTotal;
+      buffer = runningTotal.toString();
       runningTotal = 0;
       break;
     case "←":
       if (buffer.length === 1) {
         buffer = "0";
       } else {
-        buffer = buffer.substring(0, buffer.length - 1);
+        buffer = buffer.slice(0, -1);
       }
       break;
     case "+":
-      handleMath(symbol);
-      break;
     case "-":
-      handleMath(symbol);
-      break;
     case "x":
-      handleMath(symbol);
-      break;
     case "÷":
       handleMath(symbol);
       break;
@@ -51,7 +45,7 @@ function handleSymbol(symbol) {
 }
 
 function handleMath(symbol) {
-  if (buffer === 0) {
+  if (buffer === "0") {
     return;
   }
 
@@ -87,11 +81,12 @@ function handleNumber(numberString) {
 }
 
 function init() {
-  document
-    .querySelector(".calc-button")
-    .addEventListener("click", function (event) {
-      buttonClick(event.target.innerText);
+  const buttons = document.querySelectorAll(".calc-button");
+  buttons.forEach((button) => {
+    button.addEventListener("click", function () {
+      buttonClick(this.textContent);
     });
+  });
 }
 
 init();
