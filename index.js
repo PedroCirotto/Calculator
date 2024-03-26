@@ -1,92 +1,96 @@
-let runningTotal = 0;
-let buffer = "0";
-let previousOperator = null;
+const screen = document.querySelector('#screen')
+// TODO: beber cloro
 
-const screen = document.querySelector("#screen");
+let operadorAnterior
+let num = ""
+let num2 = ""
+let symbol = ""
+let operacao = 0
+let tela = ''
 
-function buttonClick(value) {
-  if (isNaN(value)) {
-    handleSymbol(value);
-  } else {
-    handleNumber(value);
-  }
-  screen.textContent = buffer;
-}
+screen.innerText = !tela ? "0" : tela
 
-function handleSymbol(symbol) {
-  switch (symbol) {
-    case "C":
-      buffer = "0";
-      runningTotal = 0;
-      break;
-    case "=":
-      if (previousOperator === null) {
-        return;
-      }
-      flushOperation(parseInt(buffer));
-      previousOperator = null;
-      buffer = runningTotal.toString();
-      runningTotal = 0;
-      break;
-    case "←":
-      if (buffer.length === 1) {
-        buffer = "0";
-      } else {
-        buffer = buffer.slice(0, -1);
-      }
-      break;
-    case "+":
-    case "-":
-    case "x":
-    case "÷":
-      handleMath(symbol);
-      break;
-  }
-}
+document.addEventListener('click', (e) => {
+  const el = e.target
 
-function handleMath(symbol) {
-  if (buffer === "0") {
-    return;
+  if (el.classList.contains('symbol')) {
+    symbol = el.innerText
+    tela = symbol
   }
 
-  const intBuffer = parseInt(buffer);
+  if (el.classList.contains('num')) {
+    if (!symbol) {
+      num += el.innerText
+      tela = num
+    }
 
-  if (runningTotal === 0) {
-    runningTotal = intBuffer;
-  } else {
-    flushOperation(intBuffer);
+    if (symbol !== '') {
+      num2 += el.innerText
+      tela = num2
+    }
+
   }
-  previousOperator = symbol;
-  buffer = "0";
-}
 
-function flushOperation(intBuffer) {
-  if (previousOperator === "+") {
-    runningTotal += intBuffer;
-  } else if (previousOperator === "-") {
-    runningTotal -= intBuffer;
-  } else if (previousOperator === "x") {
-    runningTotal *= intBuffer;
-  } else if (previousOperator === "÷") {
-    runningTotal /= intBuffer;
+  if (el.classList.contains('eq')) {
+    const numNumber = Number(num)
+    const numNumber2 = Number(num2)
+    console.log(numNumber, numNumber2);
+
+    switch (symbol) {
+      case '+':
+        operacao = somar(numNumber, numNumber2)
+        tela = operacao
+        break
+
+      case '-':
+        operacao = sub(numNumber, numNumber2)
+        tela = operacao
+        break
+
+      case 'x':
+        operacao = mult(numNumber, numNumber2)
+        tela = operacao
+        break
+
+      case '÷':
+        operacao = div(numNumber, numNumber2)
+        tela = operacao
+        break
+    }
+
+    num = operacao
+    num2 = ''
+    console.log(operacao);
   }
-}
 
-function handleNumber(numberString) {
-  if (buffer === "0") {
-    buffer = numberString;
-  } else {
-    buffer += numberString;
+  if (el.classList.contains('limpa')) {
+    limpaTudo()
   }
+
+  console.log(num, num2);
+  screen.innerText = tela
+})
+
+function limpaTudo() {
+  num = ''
+  num2 = ''
+  symbol = ''
+  tela = '0'
 }
 
-function init() {
-  const buttons = document.querySelectorAll(".calc-button");
-  buttons.forEach((button) => {
-    button.addEventListener("click", function () {
-      buttonClick(this.textContent);
-    });
-  });
+function somar(x, y) {
+  return x + y
+
+}
+function mult(x, y) {
+  return x * y
 }
 
-init();
+function sub(x, y) {
+  return x - y
+
+}
+function div(x, y) {
+  return x / y
+
+}
